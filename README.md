@@ -1,0 +1,49 @@
+# Promises, build, review: a template for AI coding agents
+
+This is a small set of three Markdown files that you hand to an AI coding agent. First you write down the **promises** the code must keep: rules that must never break, plus valid inputs that must keep working (`SPEC.md`). A **builder** agent turns each promise into tests, watches them fail, makes them pass and reports real command output (`BUILDER.md`). Then a **fresh reviewer**, an agent that never saw the builder's conversation, tries to break each promise with bad inputs and faults, saves every break as a failing test, ties every finding to a line of the spec, and answers **APPROVED** or **CHANGES** (`REVIEWER.md`). Because the reviewer may only block on things it can prove against the spec, it does not pile on generic "hardening" that rejects valid input.
+
+## Why
+
+It came out of a small, informal comparison. Several setups built the same task with the same underlying model. Every setup passed all 79 hidden tests, so the hidden tests could not tell them apart. A blind probe round, scored out of 20 (closed output pipes, edge dates, falsy injected clocks, valid inputs that must still be accepted, and so on), did:
+
+| Setup | Probe score (/20) |
+|---|---|
+| Claude Code on its own | 12.5 |
+| Claude Code + a fresh Claude reviewer | 16.5 |
+| Claude Code + a Gemini reviewer | 13.5 |
+| A three-agent team | 18.5 |
+| **This template** (`template/`) | **19.0**, but took about 2 h 12 min |
+| This template, lite (`template-lite/`) | **TODO: result pending** |
+
+What seemed to matter: explicit promises, a reviewer with clean context, and a rule that every finding must cite the spec. Generic hardening advice lowered scores.
+
+**Caveat:** each setup was run once, on one task. Treat these numbers as a hint, not a benchmark.
+
+## Which version
+
+- `template/`: the full version. The reviewer tries a deliberate break for every promise, and you allow up to 3 review rounds.
+- `template-lite/`: written to cut the run time. It allows at most 2 review rounds, does deliberate breaks only for the 3 riskiest promises, and makes round 2 a recheck of earlier findings rather than a new review.
+
+Both folders hold the same three files: `SPEC-TEMPLATE.md`, `BUILDER.md` and `REVIEWER.md`.
+
+## Use it with Claude Code (desktop app or CLI)
+
+1. Copy `SPEC-TEMPLATE.md` into your project as `SPEC.md` and fill it in. Ten minutes is usually enough; the Promises and Must-accept sections matter most. Copy `BUILDER.md` and `REVIEWER.md` into the project too (or note where they are).
+2. **Builder session.** Open a session in the project (a new chat in the desktop app, or run `claude` in the project folder) and say:
+   `Follow BUILDER.md to implement SPEC.md. Stop at the done report.`
+3. **Reviewer session, with fresh eyes.** Start a **new** session so it has no memory of the build (in the CLI, a new `claude` run without `--continue` or `--resume`) and say:
+   `Follow REVIEWER.md. Review this repo against SPEC.md only. Do not read any other notes.`
+   You can also ask the builder session to launch a subagent and give it only the paths of `REVIEWER.md` and `SPEC.md`; a subagent starts with a clean context.
+4. If the verdict is **CHANGES**, give the builder the reviewer's report and the new `tests/review/` tests, let it fix the code, then run a fresh reviewer again. Stop after 3 rounds (2 for the lite version) and decide yourself.
+
+## Use it with any other agent
+
+Nothing here is tied to one tool. Any agent that can read files and run commands works: give it the same two prompts. The things to keep:
+
+- The reviewer runs in a **separate session with a clean context** and gets only `SPEC.md` and the repo, never the builder's chat or summary.
+- A second reviewer on a different model is fine as an extra opinion, under the same rule: findings that do not cite the spec are notes, not blockers.
+- The examples use Python, but the steps are language-neutral. For property tests, a loop over a seeded standard-library random generator is enough (the comparison runs used exactly that). A property-testing library such as Hypothesis (Python) or fast-check (JavaScript) is optional.
+
+## Credits and licence
+
+The ideas are borrowed from several public skill packs and docs; see [CREDITS.md](CREDITS.md). The wording in this repo is original. Licence: see [LICENSE](LICENSE).
