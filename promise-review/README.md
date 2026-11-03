@@ -15,7 +15,7 @@ It came out of a small, informal comparison. Several setups built the same task 
 | Claude Code + a Gemini reviewer | 13.5 |
 | A three-agent team | 18.5 |
 | **This template** (`full/`) | **19.0**, but took about 2 h 12 min |
-| This template, lite (`lite/`) | **TODO: result pending** |
+| This template, lite (`lite/`) | **17.5**, in about 66 min (half the full version's time) |
 
 What seemed to matter: explicit promises, a reviewer with clean context, and a rule that every finding must cite the spec. Generic hardening advice lowered scores.
 
