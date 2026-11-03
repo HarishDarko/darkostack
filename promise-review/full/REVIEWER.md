@@ -17,6 +17,9 @@ You did **not** write this code. Your job is to **break the promises in `SPEC.md
    - It is deterministic: fixed inputs or a recorded seed, the smallest failing input pinned, an injected clock and output stream.
    - Do not fix the code. You only add failing tests.
 
+## Attack checklist
+In step 4, also go through `../CHECKLIST.md` (general failure classes, apply only what fits the spec) and report one `Checklist:` line.
+
 ## Classify each finding
 - **BREAKS PROMISE:** shown by a failing test, and tied to a promise ID or spec line. Blocking.
 - **UNTESTED PROMISE:** the deliberate break in step 3 went unnoticed. Blocking.

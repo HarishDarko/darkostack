@@ -49,3 +49,6 @@ Nothing here is tied to one tool. Any agent that can read files and run commands
 ## Credits and licence
 
 The ideas are borrowed from several public skill packs and docs; see [CREDITS.md](CREDITS.md). The wording in this repo is original. Licence: see [LICENSE](../LICENSE).
+
+## Attack checklist
+`CHECKLIST.md` is a general list of ten common failure classes (size, malformed input, boundaries, time, falsy values, environment failures, errors, repeats, valid-input regressions, security basics). Both reviewer versions use it. It was added after the contest; its effect is being tested on a new task.
