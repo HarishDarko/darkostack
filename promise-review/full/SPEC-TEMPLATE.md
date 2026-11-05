@@ -27,9 +27,10 @@ Kinds:
 - **must-accept**: valid input that has to keep working. A reviewer may not "harden" it away.
 - **must-reject**: input that has to be refused; say how it is refused.
 
-Risk (the human decides; it is the cost if this promise breaks):
-- **high**: money, data loss, security, or anything costly or hard to undo. The reviewer must break-check every high promise.
+Risk (the cost if this promise breaks). You may leave this column empty: the spec check fills it in, and you can change any rating you disagree with.
+- **high**: money or payments, data loss or corruption, security or privacy, anything hard to undo, or the main thing the feature exists for. **When in doubt, high.**
 - **normal**: everything else.
+The reviewer must break-check every high promise. A reviewer may raise a rating to high (with a reason) but never lower one.
 
 ## 4. Must-accept examples
 Concrete valid inputs that must always work. They stop over-correction, where a reviewer adds checks that reject valid input.
