@@ -24,6 +24,8 @@ This template borrows **ideas** from the packs and docs below. No text was copie
 | Requirements written as checkable properties; on a failure ask whether the spec, code or test is wrong | SPEC section 3, SPEC GAP class | Kiro | [correctness docs](https://kiro.dev/docs/specs/correctness/) | product documentation (idea only) |
 | Open-question markers in the spec | SPEC section 8 | spec-kit (GitHub) | [spec-template](https://github.com/github/spec-kit/blob/main/templates/spec-template.md) | MIT |
 | Pin the smallest failing input as a fixed example; seeds | BUILDER step 6 | Hypothesis | [docs](https://hypothesis.readthedocs.io/) | MPL-2.0 (library) |
+| Review the spec before the build; stop on a mismatch with Expected / Found / Why it matters; never filter test output | SPEC-CHECK.md, BUILDER rules, REVIEWER step 2 | HumanLayer (Dex Horthy, Kyle Mistele) | [humanlayer](https://github.com/humanlayer/humanlayer), [advanced context engineering](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents) | Apache-2.0 |
+| One status line per requirement where "not verified" stays open; a visible record of spec changes | REVIEWER output, SPEC section 9 | QualityLayer (Max Ritter) | [qualitylayer](https://github.com/maxritter/qualitylayer), [docs](https://qualitylayer.dev/docs/) | proprietary (ideas only, from the public README and docs; no text or code used) |
 
 ## Note on the Trail of Bits material (CC-BY-SA-4.0)
 

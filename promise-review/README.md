@@ -26,17 +26,20 @@ What seemed to matter: explicit promises, a reviewer with clean context, and a r
 - `full/`: the full version. The reviewer tries a deliberate break for every promise, and you allow up to 3 review rounds.
 - `lite/`: written to cut the run time. It allows at most 2 review rounds, does deliberate breaks only for the 3 riskiest promises, and makes round 2 a recheck of earlier findings rather than a new review.
 
-Both folders hold the same three files: `SPEC-TEMPLATE.md`, `BUILDER.md` and `REVIEWER.md`.
+Both folders hold the same four files: `SPEC-TEMPLATE.md`, `SPEC-CHECK.md`, `BUILDER.md` and `REVIEWER.md`.
 
 ## Use it with Claude Code (desktop app or CLI)
 
 1. Copy `SPEC-TEMPLATE.md` into your project as `SPEC.md` and fill it in. Ten minutes is usually enough; the Promises and Must-accept sections matter most. Copy `BUILDER.md` and `REVIEWER.md` into the project too (or note where they are).
-2. **Builder session.** Open a session in the project (a new chat in the desktop app, or run `claude` in the project folder) and say:
+2. **Spec check, before any code.** In a fresh session say:
+   `Follow SPEC-CHECK.md. Read only SPEC.md (and the starting code, if any).`
+   Fix the spec for each item it lists, and log the change in section 9. This takes a few minutes and catches gaps before they turn into bugs.
+3. **Builder session.** Open a session in the project (a new chat in the desktop app, or run `claude` in the project folder) and say:
    `Follow BUILDER.md to implement SPEC.md. Stop at the done report.`
-3. **Reviewer session, with fresh eyes.** Start a **new** session so it has no memory of the build (in the CLI, a new `claude` run without `--continue` or `--resume`) and say:
+4. **Reviewer session, with fresh eyes.** Start a **new** session so it has no memory of the build (in the CLI, a new `claude` run without `--continue` or `--resume`) and say:
    `Follow REVIEWER.md. Review this repo against SPEC.md only. Do not read any other notes.`
    You can also ask the builder session to launch a subagent and give it only the paths of `REVIEWER.md` and `SPEC.md`; a subagent starts with a clean context.
-4. If the verdict is **CHANGES**, give the builder the reviewer's report and the new `tests/review/` tests, let it fix the code, then run a fresh reviewer again. Stop after 3 rounds (2 for the lite version) and decide yourself.
+5. If the verdict is **CHANGES**, give the builder the reviewer's report and the new `tests/review/` tests, let it fix the code, then run a fresh reviewer again. Stop after 3 rounds (2 for the lite version) and decide yourself.
 
 ## Use it with any other agent
 
@@ -52,3 +55,20 @@ The ideas are borrowed from several public skill packs and docs; see [CREDITS.md
 
 ## Attack checklist
 `CHECKLIST.md` is a general list of ten common failure classes (size, malformed input, boundaries, time, falsy values, environment failures, errors, repeats, valid-input regressions, security basics). Both reviewer versions use it. It was added after the contest and tested on a new task the template had never seen (an expense splitter, written without knowledge of the checklist). With and without it, both versions passed all 45 hidden tests and 12 fixed probes. A blind code read scored the checklist version 8.5/10 against 7.5/10: it kept reporting all errors after a malformed record and was about 4x faster on large splits, for about 2 extra minutes. One run each, so treat it as a signal.
+
+## Spec check and per-promise status (Nov 2026)
+Five additions, inspired by HumanLayer's Research-Plan-Implement skills and QualityLayer (see `research/` and CREDITS):
+- `SPEC-CHECK.md`: a fresh agent reads only the spec and lists untestable promises, contradictions and missing must-accept inputs **before** any code is written.
+- The builder stops on a spec problem with a fixed `SPEC GAP: Expected / Found / Why it matters / Proposal` note instead of guessing.
+- Proof output is never cut short (no piping through `head`, `tail` or `grep`).
+- The reviewer gives every promise one line: PASS, FAIL or NOT CHECKED. NOT CHECKED never counts as a pass.
+- `SPEC.md` keeps a dated change log for edits after the build starts.
+
+Tested on a new held-out task that starts from existing code (a small layered-config CLI: add overrides, fix two reported bugs, find four unreported ones). Same model, same reviewer, one run each:
+
+| Setup | Hidden tests | Fixed probes | Blind score (/10) | Time | Output tokens |
+|---|---|---|---|---|---|
+| Lite, before these additions | 45/45 | 12/12 | 8.5 | 42 min | ~121k |
+| **Lite with these additions** | 45/45 | 12/12 | **9.5** | 46 min | ~131k |
+
+The blind judge added 57 probes and 900 random cases (both passed all) and made 13 deliberate breaks: the new version's own tests caught 13, the old one's 12. The spec check flagged a real gap (no defined exit code for a failed output write) that the final code then handled with a clear error, where the old version exited 0 silently. One task, one run each: a signal, not proof.
