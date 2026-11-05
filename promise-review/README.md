@@ -24,7 +24,7 @@ What seemed to matter: explicit promises, a reviewer with clean context, and a r
 ## Which version
 
 - `full/`: the full version. The reviewer tries a deliberate break for every promise, and you allow up to 3 review rounds.
-- `lite/`: written to cut the run time. It allows at most 2 review rounds, does deliberate breaks only for the 3 riskiest promises, and makes round 2 a recheck of earlier findings rather than a new review.
+- `lite/`: written to cut the run time. It allows at most 2 review rounds, does deliberate breaks only for promises you mark `high` risk in the spec (at least 3), and makes round 2 a recheck of earlier findings rather than a new review.
 
 Both folders hold the same four files: `SPEC-TEMPLATE.md`, `SPEC-CHECK.md`, `BUILDER.md` and `REVIEWER.md`.
 

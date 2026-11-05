@@ -36,12 +36,12 @@ Verdict: APPROVED | CHANGES
    Want: stderr "line 1: bad date", processing continues
    Test: tests/review/test_review_P3_bad_first_line.py (fails now)
 Promise status:
-   P1 PASS (test_P1_rows_roundtrip, 2000 cases, seed 77) | P2 FAIL (finding 1) | P5 NOT CHECKED (no clock seam)
+   P1 PASS, break-checked (test_P1_rows_roundtrip, 2000 cases, seed 77) | P3 PASS, not break-checked (probe only) | P2 FAIL (finding 1) | P5 NOT CHECKED (no clock seam)
 Untested promises: P4 (break: removed the atomic rename -> no test failed)
 Spec gaps: ...
 Notes: ...
 Not checked: <anything important you could not check>
 ```
-**APPROVED** only if there are no BREAKS PROMISE or UNTESTED PROMISE findings and every promise's tests failed when you broke the code. Otherwise **CHANGES**. Every promise gets one status line: PASS with its evidence, FAIL with its finding, or NOT CHECKED with the reason. **NOT CHECKED never counts as a pass.** If you could not run something essential, the verdict is CHANGES, with the reason under "Not checked".
+**APPROVED** only if there are no BREAKS PROMISE or UNTESTED PROMISE findings and every promise's tests failed when you broke the code. Otherwise **CHANGES**. Every promise gets one status line: PASS with its evidence (and whether it was break-checked), FAIL with its finding, or NOT CHECKED with the reason. **NOT CHECKED never counts as a pass.** If you could not run something essential, the verdict is CHANGES, with the reason under "Not checked".
 
 On a re-review, rerun your saved tests yourself; do not accept "fixed" on trust. If blocking findings are still open after 3 rounds, stop and hand the decision to the human.

@@ -13,19 +13,23 @@ List every dependency the tests must be able to swap out (**injectable**: passed
 ## 3. Promises (must never break)
 One row per promise. Each one must be checkable by a test.
 
-| ID | Promise (plain words) | Kind | Check with | Fails when (the wrong result it rejects) |
-|----|----------------------|------|------------|-------------------------------|
-| P1 | Every valid input row produces exactly one output row, in the same order | always | property test (count + order) | rows lost, duplicated or reordered |
-| P2 | Formatting a date and parsing it again returns the original date | always | property test (there and back) | 29 Feb, year 1, year 9999 or a timezone shift alters the date |
-| P3 | A bad date is reported on stderr with its line number, and processing goes on | always | example + probe | crash, silent skip, wrong line number |
-| P4 | A half-written output file is never left behind | never | fault probe (disk full, killed mid-write) | a truncated file remains |
-| P5 | An injected clock that returns `0` (the epoch) is a real time, not "no clock" | must-accept | example | the code treats 0 as missing (a truthiness check) |
+| ID | Promise (plain words) | Kind | Risk | Check with | Fails when (the wrong result it rejects) |
+|----|----------------------|------|------|------------|-------------------------------|
+| P1 | Every valid input row produces exactly one output row, in the same order | always | high | property test (count + order) | rows lost, duplicated or reordered |
+| P2 | Formatting a date and parsing it again returns the original date | always | high | property test (there and back) | 29 Feb, year 1, year 9999 or a timezone shift alters the date |
+| P3 | A bad date is reported on stderr with its line number, and processing goes on | always | normal | example + probe | crash, silent skip, wrong line number |
+| P4 | A half-written output file is never left behind | never | high | fault probe (disk full, killed mid-write) | a truncated file remains |
+| P5 | An injected clock that returns `0` (the epoch) is a real time, not "no clock" | must-accept | normal | example | the code treats 0 as missing (a truthiness check) |
 
 Kinds:
 - **always**: holds for every input.
 - **never**: must not happen under any input.
 - **must-accept**: valid input that has to keep working. A reviewer may not "harden" it away.
 - **must-reject**: input that has to be refused; say how it is refused.
+
+Risk (the human decides; it is the cost if this promise breaks):
+- **high**: money, data loss, security, or anything costly or hard to undo. The reviewer must break-check every high promise.
+- **normal**: everything else.
 
 ## 4. Must-accept examples
 Concrete valid inputs that must always work. They stop over-correction, where a reviewer adds checks that reject valid input.
