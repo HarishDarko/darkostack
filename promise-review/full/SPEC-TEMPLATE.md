@@ -51,3 +51,6 @@ The exact commands that must pass, e.g. `pytest -q` and `pytest -q tests/review`
 
 ## 8. Open questions
 Write them as `[NEEDS DECISION: ...]`. The builder asks rather than guessing. A reviewer who finds the spec silent on something files a SPEC GAP, not a defect.
+
+## 9. Change log
+Any edit after the build starts gets one dated line, e.g. `2026-11-05: P3 now also covers CRLF input (answer to the builder's SPEC GAP)`. Never edit a promise silently. The builder and the reviewer always work from the latest version.

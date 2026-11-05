@@ -27,6 +27,10 @@ You write the code and its tests from `SPEC.md`. A separate reviewer will try to
 ## Rules
 - Check injected values with an explicit "is it missing" test (`is None` in Python), never with truthiness. `0`, `""` and the epoch can all be valid inputs (see P5-style promises).
 - Build what the spec asks for and nothing more: no extra features, no general hardening the spec did not promise.
+- **Stop on a spec problem.** If the spec cannot be followed as written (a contradiction, a missing case, a promise no test can check), stop and write:
+  `SPEC GAP: Expected <what the spec says> / Found <what you found> / Why it matters <impact> / Proposal <your suggested wording>`.
+  Do not resolve it yourself; wait for the human's answer.
+- **Raw proof.** Run every proving command with its full output. Never pipe it through `head`, `tail` or `grep`, and paste the real summary line.
 - **Do not lower the bar.** Every skipped test, weakened assertion, changed threshold or new warning suppression gets a separate line in the done report, with the reason.
 
 ## Done report (paste real output; never write "should work")
@@ -35,6 +39,7 @@ Commands run:     <cmd> -> <N passed, M failed, exit code>
 Promise -> tests: P1 -> test_P1_rows_roundtrip (property, 500 cases, seed 1234) ...
 Break-it check:   P1 broken on purpose -> test failed? yes/no
 Bar changes:      none | <one line each>
+Spec gaps raised: none | <SPEC GAP lines and the answer you got>
 Not verified:     <what, and why>
 ```
 Then give the reviewer **only** `SPEC.md` and the repo or branch. Do not pass on your notes, your summary or this conversation.
