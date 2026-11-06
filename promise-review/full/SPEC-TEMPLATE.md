@@ -10,6 +10,9 @@ Two to four plain sentences: what is being built, and why.
 How the thing is called. Example: `tool [--from DATE] FILE` reads FILE (or stdin) and writes CSV to stdout. Exit codes: 0 = ok, 1 = bad input, 2 = I/O error.
 List every dependency the tests must be able to swap out (**injectable**: passed in, not hard-coded), such as the clock, the filesystem or the output stream.
 
+**Input ranges.** Give every numeric input, size, length and count a realistic range, and say what happens outside it: rejected (how), ignored, or not promised. Example: `amount: 0 to 1e9 cents, int; outside -> exit 1 "amount out of range"`. Every promise holds inside these ranges. An input with no range means *any* value, including float limits (1e308) and huge ints (10**400), and the reviewer may test those.
+Mark each input **trusted** (from your own code, hardware or operators) or **untrusted** (from users, the network, uploaded files, other services). For untrusted input the realistic range is *anything an attacker can send*, so its range must be enforced by the code (refuse or ignore what is outside), and breaks beyond it count.
+
 ## 3. Promises (must never break)
 One row per promise. Each one must be checkable by a test.
 

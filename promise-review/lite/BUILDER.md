@@ -20,13 +20,14 @@ You write the code and its tests from `SPEC.md`. A separate reviewer will try to
 3. A property test can pass while checking nothing. Watch for two causes:
    - the test works out the expected answer the same way the code does, so a bug they share goes unnoticed;
    - the input filter discards most generated cases, so almost nothing actually runs. Count the cases that ran.
-4. **Red first.** See each test fail, for the right reason, before you write the code. For code that already exists, do the break-it-on-purpose check for every `high` promise, and at least 3 in total.
+4. **Red first.** See each test fail, for the right reason, before you write the code. For code that already exists, do the break-it-on-purpose check for every `high` promise, and at least 3 in total. A break counts only if a test *fails an assertion*; if the run stops with an import, syntax or collection error, the break itself is broken: redo it.
 5. Every must-accept example from spec section 4 gets a test. Every fault from section 5 gets a test (for example a fake output stream that raises a broken-pipe error, or a clock that returns `0`).
 6. When a generated case fails, keep the smallest failing input as a fixed example test (Hypothesis: `@example(...)`; seeded loop: record the seed and the input), so it is replayed on every run.
 
 ## Rules
 - Check injected values with an explicit "is it missing" test (`is None` in Python), never with truthiness. `0`, `""` and the epoch can all be valid inputs (see P5-style promises).
 - Build what the spec asks for and nothing more: no extra features, no general hardening the spec did not promise.
+- **Every fix brings its own test.** Each guard, check or fallback you add while fixing a review finding gets a test that fails when that guard is removed. Break-check it before you hand back, or the next review round will find it untested.
 - **Stop on a spec problem.** If the spec cannot be followed as written (a contradiction, a missing case, a promise no test can check), stop and write:
   `SPEC GAP: Expected <what the spec says> / Found <what you found> / Why it matters <impact> / Proposal <your suggested wording>`.
   Do not resolve it yourself; wait for the human's answer.

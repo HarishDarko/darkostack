@@ -72,3 +72,12 @@ Tested on a new held-out task that starts from existing code (a small layered-co
 | **Lite with these additions** | 45/45 | 12/12 | **9.5** | 46 min | ~131k |
 
 The blind judge added 57 probes and 900 random cases (both passed all) and made 13 deliberate breaks: the new version's own tests caught 13, the old one's 12. The spec check flagged a real gap (no defined exit code for a failed output write) that the final code then handled with a clear error, where the old version exited 0 silently. One task, one run each: a signal, not proof.
+
+## Input ranges and fix tests (Nov 2026)
+From a real use, not a contest: the lite version on a robot wheel-odometry maths module (pure Python, 11 promises). The spec check found real design gaps before coding, and the builder's break-it check exposed one weak test. But in review round 1, 2 of the 4 findings needed wheel distances near 1e308. They counted as breaks only because the spec gave no input range. Fixing them added overflow guards, and round 2 then found one of those guards untested. About half the review effort went to inputs no robot can produce. Four changes, written for any project:
+- `SPEC-TEMPLATE.md`: an **Input ranges** paragraph in section 2. Every numeric input, size and count gets a realistic range and a rule for values outside it, and is marked **trusted** or **untrusted**.
+- `SPEC-CHECK.md`: a new item **(e) Missing input ranges**, which proposes a range for each unbounded input and flags unmarked inputs (unmarked counts as untrusted).
+- `REVIEWER.md` and `CHECKLIST.md`: for trusted input, attack inside the stated ranges; a break that needs unrealistic values when no range is given is a SPEC GAP with a proposed range, not BREAKS PROMISE. For untrusted input there is no such exemption: attacker-sized values are realistic, and a crash or hang from them is a finding. Re-reviews break-check every guard a fix added.
+- `BUILDER.md`: every guard added in a fix gets its own test, checked by removing the guard. A deliberate break counts only if a test fails an assertion, not if the run stops with an import or collection error.
+
+These changes come from one use and have not yet been tested on a held-out task.
